@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Attendance Records</title>
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<!-- Bootstrap JS -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<script>
+	$(document).ready(function(){
+	  $("#search").on("keyup", function() {
+	    var value = $(this).val().toLowerCase();
+	    $("#attendanceTable tr").filter(function() {
+	      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+	    });
+	  });
+	});
+	</script>
+</head>
+<body>
+    {% block content %}
+	<div class="container">
+		<h2>Attendance Records</h2>
+		<input class="form-control mb-3" id="search" type="text" placeholder="Search by college name...">
+		<div class="table-responsive">
+			<table class="table table-bordered table-hover">
+				<thead>
+					<tr>
+						<th>Date</th>
+						<th>Roll no</th>
+						<th>Department</th>
+						<th>Year</th>
+						<th>FN</th>
+						<th>AN</th>
+					</tr>
+				</thead>
+                {% for data in detial %}
+               
+				<tbody id="attendanceTable">
+					<tr>
+						<td>{{data.date}}</td>
+						<td>{{data.roll}}</td>
+                        <td>{{data.dep}}</td>
+						<td>{{data.year}}</td>
+						<td style="background-color: {{data.fn_color}}" >{{data.fn}}</td>
+						<td style="background-color: {{data.an_color}}">{{data.an}}</td>
+
+					</tr>
+					
+				
+				</tbody>
+                {% endfor %}
+			</table>
+		</div>
+	</div>
+    {% endblock %}
+</body>
+</html>
