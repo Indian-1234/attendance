@@ -90,8 +90,8 @@ urlpatterns = [
 
    
 
-#############################################################################  attendance #################################
-    path("<str:user>/<str:department>/<str:year>/submit/",views.send),
+############################################################################ #  attendance #################################
+    path("<str:user>/<str:department>/<str:year>/emailsubmit",views.send,name="emailsubmit"),
     path("<str:user>/<str:department>/<str:year>/auto/",views.auto),
 
 ]

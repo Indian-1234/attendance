@@ -126,6 +126,7 @@ def studetail(request,users):
             dic = {}
             ob = models.Attendance.objects.get(Roll=i.reg)
             print(ob)
+            dic["name"] = i.name
             dic["roll"] = i.reg
             dic["dep"] = i.department
             dic["year"] = i.year
@@ -141,7 +142,18 @@ def studetail(request,users):
                 dic["an_color"] = "green"
             else:
                 dic["an_color"] = "red"
+          
+
+            s = models.Attendance.objects.filter(Roll=i.reg,Date_field=ob.Date_field,College_Name=i.clg,morning_attendance=True)
+            t = models.Attendance.objects.filter(Roll=i.reg,Date_field=ob.Date_field,College_Name=i.clg,afternoon_attendance=True)
+            lent= len(s)+len(t)
+            dic["per"] = lent
             li.append(dic)
+
+
+
+
+
 
 
         
@@ -207,7 +219,7 @@ def department(request,user,department,year):
     if models.Register.objects.filter(cname = obj1.name , dep = department,year = year,date = f_date).exists():
         data = models.Register.objects.get(cname = obj1.name , dep = department,year = year,date = f_date)
         print(data.fnattnd)
-        if data.fnattnd and data.anattnd:
+        if data.fnattnd or data.anattnd:
             new = []
             for s in student:
                 print(s.name)
@@ -215,7 +227,7 @@ def department(request,user,department,year):
                 dic = {}
                 dic["name"] = s.name
                 dic["reg"] = s.reg
-                dic["id"] = s.id
+                
                	if atd.morning_attendance == "True":
                     dic["fn"] = atd.morning_attendance
 
@@ -226,11 +238,33 @@ def department(request,user,department,year):
 
 
                	new.append(dic)
+            
             print(new)
-            message = {"department":department,"year": years.get(str(year)),"logo":obj1.logo.url,"name":obj1.name,"detial":new,"userid":user,"msg":"submited"}
+            message = {"department":department,"year": years.get(str(year)),"logo":obj1.logo.url,"name":obj1.name,"detial":new,"userid":user}
+            if data.fnattnd:
+                message["msg1"]="apple"
+            if data.anattnd:
+                message["msg2"]="orange"
             return render(request,"attendance.html",message,)
-        else:
-            return render(request,"attendance.html",message,)
+        # elif data.fnattnd:
+        #     new = []
+        #     for s in student:
+        #         print(s.name)
+        #         atd = models.Attendance.objects.get(College_Name=obj1.name,Date_field = f_date,Roll = s.reg)
+        #         dic = {}
+        #         dic["name"] = s.name
+        #         dic["reg"] = s.reg
+                
+        #        	if atd.morning_attendance == "True":
+        #             dic["fn"] = atd.morning_attendance
+
+        #        	new.append(dic)
+        #     message = {"department":department,"year": years.get(str(year)),"logo":obj1.logo.url,"name":obj1.name,"detial":new,"userid":user,"msg":"submited"}
+        #     return render(request,"attendance.html",message,)
+        # else:
+        #     return render(request,"attendance.html",message,)
+    
+
     else:
         print("hello")
         return render(request,"attendance.html",message,)
@@ -373,13 +407,12 @@ def send(request,user,department,year):
             l.append(i.name)
             number = i.s_mobile
             msg = request.POST["whatsapp"]
+            print(number)
+            print("*******************************************")
+            print(msg)
             # msg = "*Greetings from "+clg.name +" :*"+" "+msg
             print(clg.logo.url)
             send_mail("college", msg, 'your_email@gmail.com', [number])
-            
-
-
-
     print(l)
     return redirect("attendance",user,department,year)
 
